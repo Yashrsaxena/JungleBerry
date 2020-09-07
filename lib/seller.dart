@@ -1,7 +1,6 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dashboard.dart';
 
 class Seller extends StatefulWidget {
   @override
@@ -10,34 +9,33 @@ class Seller extends StatefulWidget {
 
 class _SellerState extends State<Seller> {
   @override
-  Widget build(BuildContext context){
-    bool login = false;
-  return Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-            child: Card(
-              elevation: 2,
-              child: login?Login():Register(),
-            ),
-          );
-        }
-      }
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+      ),
+      child: Card(
+        elevation: 2,
+        child: Register(),
+      ),
+    );
+  }
+}
 
 class Register extends StatefulWidget {
-  Register({Key key, this.login}) : super(key: key);
-  final bool login;
+  Register({Key key}) : super(key: key);
   @override
   RegisterState createState() => RegisterState();
 }
 
 class RegisterState extends State<Register> {
-  bool login = false;
-  void change(){
-    setState((){
+  bool login = true;
+  void change() {
+    setState(() {
       login = !login;
     });
   }
+
   Future<FormDependency> _dependencies;
   Model _model;
 
@@ -45,7 +43,8 @@ class RegisterState extends State<Register> {
   District _currentDistrict;
   List<District> _currentDistrictList;
   final regkey = GlobalKey<FormState>();
-    void initState() {
+  final logkey = GlobalKey<FormState>();
+  void initState() {
     super.initState();
 
     _model = Model(state: null, district: null);
@@ -55,6 +54,7 @@ class RegisterState extends State<Register> {
 
     _dependencies = _getFormDependency();
   }
+
   Future<FormDependency> _getFormDependency() async {
     var state1 = _State(id: 1, name: 'Andhra Pradesh');
     var state2 = _State(id: 2, name: 'Arunachal Pradesh');
@@ -86,7 +86,8 @@ class RegisterState extends State<Register> {
     var state28 = _State(id: 28, name: 'West Bengal');
     var state29 = _State(id: 29, name: 'Andaman and Nicobar Islands');
     var state30 = _State(id: 30, name: 'Chandigarh');
-    var state31 = _State(id: 31, name: 'Dadra and Nagar Haveli and Daman and Diu');
+    var state31 =
+        _State(id: 31, name: 'Dadra and Nagar Haveli and Daman and Diu');
     var state32 = _State(id: 32, name: 'Delhi');
     var state33 = _State(id: 33, name: 'Jammu and Kashmir');
     var state34 = _State(id: 34, name: 'Ladakh');
@@ -94,7 +95,42 @@ class RegisterState extends State<Register> {
     var state36 = _State(id: 36, name: 'Puducherry');
 
     var stateList = [
-      state1,state2,state3,state4,state5,state6,state7,state8,state9,state10,state11,state12,state13,state14,state15,state16,state17,state18,state19,state20,state21,state22,state23,state24,state25,state26,state27,state28,state29,state30,state31,state32,state33,state34,state35,state36,
+      state1,
+      state2,
+      state3,
+      state4,
+      state5,
+      state6,
+      state7,
+      state8,
+      state9,
+      state10,
+      state11,
+      state12,
+      state13,
+      state14,
+      state15,
+      state16,
+      state17,
+      state18,
+      state19,
+      state20,
+      state21,
+      state22,
+      state23,
+      state24,
+      state25,
+      state26,
+      state27,
+      state28,
+      state29,
+      state30,
+      state31,
+      state32,
+      state33,
+      state34,
+      state35,
+      state36,
     ];
     var districtList = [
       //Andhra Pradesh
@@ -181,6 +217,18 @@ class RegisterState extends State<Register> {
       //Gujarat
       //Haryana
       //Himachal Pradesh
+      District(name: 'Bilaspur', state: state9),
+      District(name: 'Chamba', state: state9),
+      District(name: 'Hamirpur', state: state9),
+      District(name: 'Kangra', state: state9),
+      District(name: 'Kinnaur', state: state9),
+      District(name: 'Kullu', state: state9),
+      District(name: 'Lahaul & Spiti', state: state9),
+      District(name: 'Mandi', state: state9),
+      District(name: 'Shimla', state: state9),
+      District(name: 'Sirmaur', state: state9),
+      District(name: 'Solan', state: state9),
+      District(name: 'Una', state: state9),
       //Jammu and Kashmir
       //Jharkhand
       //Karnataka
@@ -203,7 +251,6 @@ class RegisterState extends State<Register> {
       //Uttarakhand
       //Uttar Pradesh
       //West Bengal
-
     ];
 
     // Init district variables
@@ -213,294 +260,427 @@ class RegisterState extends State<Register> {
 
     return FormDependency(states: stateList, districts: districtList);
   }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     TextEditingController pass = new TextEditingController();
     TextEditingController confirmPass = new TextEditingController();
-    return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                  Image.asset('assets/images/register.jpg',
-                  width: width * 0.35,),
-                  InkWell(
-                    child: Text('Already Have an Account?'),
-                    onTap: change,
-                  ),
-                ]),
-                Container(
-                  child: FutureBuilder<FormDependency>(
-                    future: _dependencies,
-                    builder: (context, snapshot){
-                      if(snapshot.connectionState == ConnectionState.done){
+    bool otp = false;
+    void expand() {
+      setState(() {
+        otp = true;
+      });
+    }
+
+    if (!login)
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image.asset(
+                  'assets/images/register.jpg',
+                  width: width * 0.35,
+                ),
+                InkWell(
+                  child: Text('Already Have an Account?'),
+                  onTap: change,
+                ),
+              ]),
+          Container(
+            child: FutureBuilder<FormDependency>(
+                future: _dependencies,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
                     return Form(
-                                  key: regkey,
-                                  child: Center(
-                                    child: Container(
-                                      height: height * 0.7,
-                                      width: width * 0.5,
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                          left: 30.0,
-                                          right: 30,
-                                        ),
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              TextFormField(
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0),),
-                                                  prefixIcon: Icon(Icons.person),
-                                                  hintText: 'Name',
-                                                ),
-                                                cursorColor: Colors.red,
-                                                validator: (value) {
-                                                  if (value.isEmpty) {
-                                                    return 'Fill your name first';
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
-                                              SizedBox(
-                                                height: 30,
-                                              ),
-                                              TextFormField(
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0),),
-                                                  prefixIcon: Icon(Icons.dialpad),
-                                                  hintText: 'Phone Number',
-                                                  counter: SizedBox.shrink(),
-                                                ),
-                                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                                maxLength: 10,
-                                                cursorColor: Colors.red,
-                                                autovalidate: true,
-                                                validator: (value) {
-                                                 if(value.length!=10&&value.isNotEmpty)
-                                                  {
-                                                    return 'Invalid Number';
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
-                                              SizedBox(
-                                                height: 30,
-                                              ),
-                                              TextFormField(
-                                                decoration: InputDecoration(
-                                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0),),
-                                                    prefixIcon: Icon(
-                                                        Icons.alternate_email),
-                                                    hintText: 'Email (Optional)'),
-                                                    autovalidate: true,
-                                                validator: (value) {
-                                                  if (!value.contains('@')&&value.isNotEmpty)
-                                                    return 'Enter a valid email id';
-                                                  else
-                                                    return null;
-                                                },
-                                                cursorColor: Colors.red,
-                                              ),
-                                              SizedBox(
-                                                height: 30,
-                                              ),
-                                              TextFormField(
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0),),
-                                                  prefixIcon: Icon(Icons.home),
-                                                  hintText: 'Address',
-                                                ),
-                                                cursorColor: Colors.red,
-                                                validator: (value) {
-                                                  if (value.isEmpty) {
-                                                    return 'Please tell Where to Reach';
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
-                                              SizedBox(
-                                                height: 30,
-                                              ),
-                                              TextFormField(
-                                                decoration: InputDecoration(
-                                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0),),
-                                                    prefixIcon:
-                                                        Icon(Icons.location_on),
-                                                    hintText: 'Landmark'),
-                                                cursorColor: Colors.red,
-                                                validator: (value) {
-                                                  if (value.isEmpty) {
-                                                    return 'A Near Point Please';
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
-                                              SizedBox(
-                                                height: 30,
-                                              ),
-                                              CustomDropDownInput<_State>(
-                        labelText: 'State',
-                        optional: false,
-                        enabled: true,
-                        initialValue: null,
-                        itemList: snapshot.data.states.map((_State state) {
-                          return DropdownMenuItem<_State>(
-                            
-                            value: state,
-                            child: Text(state.name),
-                          );
-                        }).toList(),
-                        onChanged: (newValue) {
-                          _model.state = newValue;
-                          _model.district = null;
-                  
-                          // Reset district dropdown value and update the item list based on the state selected
-                          setState(() {
-                            _currentDistrict =
-                                null; //null is passed to the dropdown build, but the internal valu of dropdown does not set the null value
-                            _currentDistrictList = _districtList
-                                .where((x) => x.state.id == newValue.id)
-                                .toList();
-                          });
-                        },
-                      ),
-                                              SizedBox(
-                                                height: 30,
-                                              ),
-                                              CustomDropDownInput<District>(
-                        labelText: 'District',
-                        optional: false,
-                        enabled: true,
-                        initialValue: _currentDistrict,
-                        itemList: (_currentDistrictList != null)
-                            ? _currentDistrictList.map((District district) {
-                                return DropdownMenuItem<District>(
-                                  value: district,
-                                  child: Text(district.name),
-                                );
-                              }).toList()
-                            : null,
-                        onChanged: (newValue) {
-                          _model.district = newValue;
-                  
-                          // Update initialValue
-                          setState(() {
-                            _currentDistrict = newValue;
-                          });
-                        },
-                      ),
-                                              SizedBox(
-                                                height: 30,
-                                              ),
-                                              TextFormField(
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0),),
-                                                  prefixIcon: Icon(Icons.dialpad),
-                                                  hintText: 'PIN Code',
-                                                  counter: SizedBox.shrink(),
-                                                ),
-                                                cursorColor: Colors.red,
-                                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                                maxLength: 6,
-                                                validator: (value) {
-                                                  if (value.isEmpty) {
-                                                    return 'Enter PIN Code';
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
-                                              SizedBox(
-                                                height: 30,
-                                              ),
-                                              TextFormField(
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0),),
-                                                  prefixIcon: Icon(Icons.place),
-                                                  hintText: 'Username',
-                                                ),
-                                                cursorColor: Colors.red,
-                                                validator: (value) {
-                                                  if (value.isEmpty) {
-                                                    return 'Set your Username';
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
-                                              SizedBox(
-                                                height: 30,
-                                              ),
-                                              TextFormField(
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0),),
-                                                  prefixIcon:
-                                                      Icon(Icons.fingerprint),
-                                                  hintText: 'Password',
-                                                ),
-                                                cursorColor: Colors.red,
-                                                obscureText: true,
-                                                controller: pass,
-                                                validator: (value) {
-                                                  if (value.isEmpty) {
-                                                    return 'Set Your Password';
-                                                  }
-                                                  return null;                                             },
-                                              ),
-                                              SizedBox(
-                                                height: 30,
-                                              ),
-                                              TextFormField(
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0),),
-                                                  prefixIcon:
-                                                      Icon(Icons.fingerprint),
-                                                  hintText: 'Re-enter Password',
-                                                ),
-                                                cursorColor: Colors.red,
-                                                obscureText: true,
-                                                controller: confirmPass,
-                                                autovalidate: true,
-                                                validator: (value) {
-                                                  if (value.isEmpty&&pass.text.isNotEmpty) {
-                                                    return 'Re-enter Password';
-                                                  }
-                                                  else if(value != pass.text)
-                                                  return 'Password Doesn\'t Match';
-                                                  return null;
-                                                },
-                                              ),
-                                              SizedBox(
-                                                height: 30,
-                                              ),
-                                              RaisedButton(
-                                                color: Color(int.parse('0xFF6C63FF')),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(20),
-                                                ),
-                                                onPressed: () {},
-                                                child: Text('Register',
-                                                style: TextStyle(color: Colors.white),),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                      key: regkey,
+                      child: Center(
+                        child: Container(
+                          height: height * 0.7,
+                          width: width * 0.5,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 30.0,
+                              right: 30,
+                            ),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
                                       ),
+                                      prefixIcon: Icon(Icons.person),
+                                      hintText: 'Name',
+                                    ),
+                                    cursorColor: Colors.red,
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Fill your name first';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
+                                      ),
+                                      prefixIcon: Icon(Icons.dialpad),
+                                      hintText: 'Phone Number',
+                                      counter: SizedBox.shrink(),
+                                    ),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    maxLength: 10,
+                                    cursorColor: Colors.red,
+                                    autovalidate: true,
+                                    validator: (value) {
+                                      if (value.length != 10 &&
+                                          value.isNotEmpty) {
+                                        return 'Invalid Number';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30.0),
+                                        ),
+                                        prefixIcon: Icon(Icons.alternate_email),
+                                        hintText: 'Email (Optional)'),
+                                    autovalidate: true,
+                                    validator: (value) {
+                                      if (!value.contains('@') &&
+                                          value.isNotEmpty)
+                                        return 'Enter a valid email id';
+                                      else
+                                        return null;
+                                    },
+                                    cursorColor: Colors.red,
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
+                                      ),
+                                      prefixIcon: Icon(Icons.home),
+                                      hintText: 'Address',
+                                    ),
+                                    cursorColor: Colors.red,
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Please tell Where to Reach';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30.0),
+                                        ),
+                                        prefixIcon: Icon(Icons.location_on),
+                                        hintText: 'Landmark'),
+                                    cursorColor: Colors.red,
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'A Near Point Please';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  CustomDropDownInput<_State>(
+                                    labelText: 'State',
+                                    optional: false,
+                                    enabled: true,
+                                    initialValue: null,
+                                    itemList: snapshot.data.states
+                                        .map((_State state) {
+                                      return DropdownMenuItem<_State>(
+                                        value: state,
+                                        child: Text(state.name),
+                                      );
+                                    }).toList(),
+                                    onChanged: (newValue) {
+                                      _model.state = newValue;
+                                      _model.district = null;
+
+                                      // Reset district dropdown value and update the item list based on the state selected
+                                      setState(() {
+                                        _currentDistrict =
+                                            null; //null is passed to the dropdown build, but the internal valu of dropdown does not set the null value
+                                        _currentDistrictList = _districtList
+                                            .where((x) =>
+                                                x.state.id == newValue.id)
+                                            .toList();
+                                      });
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  CustomDropDownInput<District>(
+                                    labelText: 'District',
+                                    optional: false,
+                                    enabled: true,
+                                    initialValue: _currentDistrict,
+                                    itemList: (_currentDistrictList != null)
+                                        ? _currentDistrictList
+                                            .map((District district) {
+                                            return DropdownMenuItem<District>(
+                                              value: district,
+                                              child: Text(district.name),
+                                            );
+                                          }).toList()
+                                        : null,
+                                    onChanged: (newValue) {
+                                      _model.district = newValue;
+
+                                      // Update initialValue
+                                      setState(() {
+                                        _currentDistrict = newValue;
+                                      });
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
+                                      ),
+                                      prefixIcon: Icon(Icons.dialpad),
+                                      hintText: 'PIN Code',
+                                      counter: SizedBox.shrink(),
+                                    ),
+                                    cursorColor: Colors.red,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    maxLength: 6,
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Enter PIN Code';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
+                                      ),
+                                      prefixIcon: Icon(Icons.place),
+                                      hintText: 'Username',
+                                    ),
+                                    cursorColor: Colors.red,
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Set your Username';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
+                                      ),
+                                      prefixIcon: Icon(Icons.fingerprint),
+                                      hintText: 'Password',
+                                    ),
+                                    cursorColor: Colors.red,
+                                    obscureText: true,
+                                    controller: pass,
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Set Your Password';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
+                                      ),
+                                      prefixIcon: Icon(Icons.fingerprint),
+                                      hintText: 'Re-enter Password',
+                                    ),
+                                    cursorColor: Colors.red,
+                                    obscureText: true,
+                                    controller: confirmPass,
+                                    autovalidate: true,
+                                    validator: (value) {
+                                      if (value.isEmpty &&
+                                          pass.text.isNotEmpty) {
+                                        return 'Re-enter Password';
+                                      } else if (value != pass.text)
+                                        return 'Password Doesn\'t Match';
+                                      return null;
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+                                  RaisedButton(
+                                    color: Color(0xFF6C63FF),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    onPressed: () {},
+                                    child: Text(
+                                      'Register',
+                                      style: TextStyle(color: Colors.white),
                                     ),
                                   ),
-                                );
-                    }
-                    return Container();
-                    }),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  return Container();
+                }),
+          ),
+        ],
+      );
+    else
+      return Row(
+        children: <Widget>[
+          Form(
+            key: logkey,
+            child: Center(
+              child: Container(
+                height: height * 0.7,
+                width: width * 0.5,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: 30.0,
+                    right: 30,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      TextFormField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          prefixIcon: Icon(Icons.dialpad),
+                        ),
+                        cursorColor: Colors.blue,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please fill the above Field';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          prefixIcon: Icon(Icons.fingerprint),
+                        ),
+                        cursorColor: Colors.blue,
+                        obscureText: true,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please fill the above Field';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      RaisedButton(
+                        onPressed: () {},
+                        child: Text('Login',
+                            style: TextStyle(color: Colors.white)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        color: Color(0xFF6C63FF),
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      InkWell(
+                        child: Text("Forgot Password?"),
+                        onTap: expand,
+                      ),
+                    ],
+                  ),
                 ),
-                ],
-    );
+              ),
+            ),
+          ),
+          Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image.asset(
+                  'assets/images/loginseller.png',
+                  width: width * 0.35,
+                ),
+                InkWell(
+                  child: Text('New Here?'),
+                  onTap: change,
+                ),
+              ]),
+        ],
+      );
   }
 }
 
@@ -516,68 +696,67 @@ class LoginState extends State<Login> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Container(
-      child:Form(
-                                key: loginkey,
-                                child: Center(
-                                  child: Container(
-                                    height: height * 0.7,
-                                    width: width * 0.5,
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 30.0,
-                                        right: 30,
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          TextFormField(
-                                            decoration: InputDecoration(
-                                              border: OutlineInputBorder(),
-                                              prefixIcon: Icon(Icons.dialpad),
-                                            ),
-                                            cursorColor: Colors.red,
-                                            validator: (value) {
-                                              if (value.isEmpty) {
-                                                return 'Please fill the above Field';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                          SizedBox(
-                                            height: 30,
-                                          ),
-                                          TextFormField(
-                                            decoration: InputDecoration(
-                                              border: OutlineInputBorder(),
-                                              prefixIcon:
-                                                  Icon(Icons.fingerprint),
-                                            ),
-                                            cursorColor: Colors.green,
-                                            obscureText: true,
-                                            validator: (value) {
-                                              if (value.isEmpty) {
-                                                return 'Please fill the above Field';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                          SizedBox(
-                                            height: 30,
-                                          ),
-                                          RaisedButton(
-                                            onPressed: () {},
-                                            child: Text('Login'),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-      
+      child: Form(
+        key: loginkey,
+        child: Center(
+          child: Container(
+            height: height * 0.7,
+            width: width * 0.5,
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: 30.0,
+                right: 30,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  TextFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.dialpad),
+                    ),
+                    cursorColor: Colors.red,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please fill the above Field';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.fingerprint),
+                    ),
+                    cursorColor: Colors.green,
+                    obscureText: true,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please fill the above Field';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  RaisedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context, MaterialPageRoute(builder: (context)=>new Dashboard()));
+                    },
+                    child: Text('Login'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -604,7 +783,6 @@ class FormDependency {
 }
 
 class Model {
-  
   _State state;
   District district;
 

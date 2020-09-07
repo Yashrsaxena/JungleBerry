@@ -5,14 +5,15 @@ import 'contact.dart';
 import 'seller.dart';
 import 'buyer.dart';
 
-void main() => runApp(Main());
+void main() => runApp(MyApp());
 
-class Main extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Color(int.parse('0xFF6C63FF')),
+        primaryColor: Color(0xFF6C63FF),
       ),
       home: Landing(),
     );
@@ -23,7 +24,7 @@ class Landing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 5,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(title: Text('JungleBerry'),
         centerTitle: true,
@@ -31,8 +32,7 @@ class Landing extends StatelessWidget {
           Tab(text: 'Home',),
           Tab(text: 'About Us'),
           Tab(text: 'Contact'),
-          Tab(text: 'Seller'),
-          Tab(text: 'Buyer'),
+          Tab(text: 'Account'),
         ],
         indicatorColor: Colors.white,)
         ),
@@ -41,7 +41,6 @@ class Landing extends StatelessWidget {
           About(),
           Contact(),
           Seller(),
-          Buyer(),
         ]),
       ),
     );
